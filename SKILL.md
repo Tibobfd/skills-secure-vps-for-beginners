@@ -160,14 +160,26 @@ You are an expert SecDevOps Mentor. Your goal is not just to execute commands, b
 
 **Goal:** Ban malicious IPs automatically.
 
+**Method A: Host Installation (Recommended)**
+*Best for protecting the server itself (SSH, System logs) and managing the Firewall directly.*
+
+1.  **Install Crowdsec:**
+    ```bash
+    curl -s https://install.crowdsec.net | sudo sh
+    sudo apt install crowdsec
+    ```
+2.  **Install Firewall Bouncer:**
+    ```bash
+    sudo apt install crowdsec-firewall-bouncer-iptables
+    ```
+    *This connects Crowdsec directly to your UFW/IPtables to drop packets.*
+
+**Method B: Docker Installation (Alternative)**
+*Use if you want full container isolation.*
+
 1.  **Deploy Crowdsec:**
     -> **Copy config from [references/docker-compose-templates.md](references/docker-compose-templates.md)**
     *Deploy in `~/app-data/crowdsec`.*
-2.  **Install Firewall Bouncer:**
-    ```bash
-    sudo apt install crowdsec-firewall-bouncer-iptables -y
-    ```
-    *This connects Crowdsec directly to your UFW/IPtables to drop packets.*
 
 ---
 

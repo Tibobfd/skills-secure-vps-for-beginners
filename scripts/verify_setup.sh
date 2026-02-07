@@ -43,14 +43,23 @@ else
 fi
 
 # Check Docker & Containers
-echo "[Check] Critical Containers:"
-for container in traefik crowdsec watchtower; do
-    echo -n "  - $container... "
+echo "[Check] Critical Containers/Services:"
+for container in traefik watchtower; do
+    echo -n "  - $container (Docker)... "
     if docker ps --format '{{.Names}}' | grep -q "$container"; then
         echo "✅ Up"
     else
         echo "⚠️  Not found or stopped"
     fi
 done
+
+echo -n "  - crowdsec... "
+if docker ps --format '{{.Names}}' | grep -q "crowdsec"; then
+    echo "✅ Up (Docker)"
+elif systemctl is-active --quiet crowdsec; then
+    echo "✅ Up (Systemd)"
+else
+    echo "⚠️  Not found or stopped"
+fi
 
 echo "=== Verification Complete ==="
