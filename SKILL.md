@@ -175,7 +175,12 @@ You are an expert SecDevOps Mentor. Your goal is not just to execute commands, b
     *This connects Crowdsec directly to your UFW/IPtables to drop packets.*
 3.  **Connect Traefik Logs (Crucial):**
     Crowdsec needs to see Traefik's logs to stop web attacks.
-    *   **Install Collection:** `sudo cscli collections install crowdsecurity/traefik`
+    *   **Install Collection:** 
+        ```bash
+        sudo cscli collections install crowdsecurity/traefik
+        # Recommended Extras (Best Practices 2025):
+        sudo cscli collections install crowdsecurity/whitelist-good-actors crowdsecurity/http-cve
+        ```
     *   **Configure Acquisition:** Add this to `/etc/crowdsec/acquis.yaml`:
         ```yaml
         filenames:
