@@ -173,6 +173,17 @@ You are an expert SecDevOps Mentor. Your goal is not just to execute commands, b
     sudo apt install crowdsec-firewall-bouncer-iptables
     ```
     *This connects Crowdsec directly to your UFW/IPtables to drop packets.*
+3.  **Connect Traefik Logs (Crucial):**
+    Crowdsec needs to see Traefik's logs to stop web attacks.
+    *   **Install Collection:** `sudo cscli collections install crowdsecurity/traefik`
+    *   **Configure Acquisition:** Add this to `/etc/crowdsec/acquis.yaml`:
+        ```yaml
+        filenames:
+          - /home/ubuntu/app-data/traefik/logs/access.log
+        labels:
+          type: traefik
+        ```
+    *   **Restart:** `sudo systemctl restart crowdsec`
 
 **Method B: Docker Installation (Alternative)**
 *Use if you want full container isolation.*

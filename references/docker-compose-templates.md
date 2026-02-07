@@ -13,6 +13,8 @@ services:
     container_name: traefik
     command:
       - "--api.dashboard=true" # Enable Dashboard logic
+      - "--accesslog=true" # Enable Access Logs for Crowdsec
+      - "--accesslog.filepath=/var/log/traefik/access.log"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
@@ -27,6 +29,7 @@ services:
       # - "127.0.0.1:8080:8080" # Access via SSH Tunnel only
     volumes:
       - "./letsencrypt:/letsencrypt"
+      - "./logs:/var/log/traefik" # Shared logs for Crowdsec
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
       - proxy-net
