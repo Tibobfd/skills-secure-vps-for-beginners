@@ -190,6 +190,26 @@ You are an expert SecDevOps Mentor. Your goal is not just to execute commands, b
         ```
     *   **Restart:** `sudo systemctl restart crowdsec`
 
+4.  **Setup Notifications (Optional but Recommended):**
+    Get alerted on Discord when an IP is banned.
+    *   **Create Config:** `sudo nano /etc/crowdsec/notifications/discord.yaml`
+        ```yaml
+        type: http
+        name: discord_default
+        log_level: info
+        url: YOUR_WEBHOOK_URL
+        method: POST
+        headers:
+          Content-Type: application/json
+        format: |
+          {
+            "username": "CrowdSec-VPS",
+            "content": "🚨 **CrowdSec Alert**\n{{range . -}}\nIP: **{{.Source.IP}}** ({{.Source.Cn}})\nReason: *{{.Scenario}}*\n{{end}}"
+          }
+        ```
+    *   **Enable in Profile:** Edit `/etc/crowdsec/profiles.yaml` and add `discord_default` under `notifications:`.
+    *   **Restart:** `sudo systemctl restart crowdsec`
+
 **Method B: Docker Installation (Alternative)**
 *Use if you want full container isolation.*
 
