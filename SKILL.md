@@ -23,7 +23,7 @@ You are an expert SecDevOps Mentor. Your goal is not just to execute commands, b
 # Secure VPS Setup Guide (Expert Edition)
 
 ## Prerequisites
-- A fresh Linux VPS (Ubuntu 24.04+ preferred).
+- A fresh Linux VPS (Ubuntu LTS - Latest Version preferred).
 - Root or `sudo` access.
 - A domain name (for Traefik).
 
@@ -126,6 +126,7 @@ You are an expert SecDevOps Mentor. Your goal is not just to execute commands, b
     - Try to SSH into your VPS using this IP from your local machine: `ssh user@100.x.y.z`
 4.  **Close the Public Front Door:**
     Once you are SURE you can connect via Tailscale, remove the public SSH rule.
+    > **⚠️ SAFETY NET:** Ensure you have access to your VPS Provider's "Web Console" or "KVM" (e.g., OVH/Hetzner panel). If Tailscale fails, that is your only way back in!
     ```bash
     sudo ufw delete allow ssh
     ```
@@ -150,6 +151,13 @@ You are an expert SecDevOps Mentor. Your goal is not just to execute commands, b
 3.  **Deploy Traefik:**
     -> **Copy config from [references/docker-compose-templates.md](references/docker-compose-templates.md)**
     *Deploy in `~/app-data/traefik`.*
+    **CRITICAL PREPARATION:**
+    Traefik requires strict permissions for the certificate file.
+    ```bash
+    mkdir -p ~/app-data/traefik/letsencrypt
+    touch ~/app-data/traefik/letsencrypt/acme.json
+    chmod 600 ~/app-data/traefik/letsencrypt/acme.json
+    ```
 4.  **Deploy Watchtower:**
     -> **Copy config from [references/docker-compose-templates.md](references/docker-compose-templates.md)**
     *Create `~/app-data/watchtower/docker-compose.yml` and deploy.*

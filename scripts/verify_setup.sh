@@ -34,6 +34,20 @@ else
     echo "✅ Restricted (Secure)"
 fi
 
+# Check Traefik Permissions (Critical)
+echo -n "[Check] Traefik acme.json permissions... "
+ACME_FILE="$HOME/app-data/traefik/letsencrypt/acme.json"
+if [ -f "$ACME_FILE" ]; then
+    PERM=$(stat -c "%a" "$ACME_FILE")
+    if [ "$PERM" = "600" ]; then
+        echo "✅ Correct (600)"
+    else
+        echo "❌ Unsafe ($PERM) - Run: chmod 600 $ACME_FILE"
+    fi
+else
+    echo "⚠️  File not found (Is Traefik set up?)"
+fi
+
 # Check Tailscale
 echo -n "[Check] Tailscale... "
 if tailscale status > /dev/null 2>&1; then

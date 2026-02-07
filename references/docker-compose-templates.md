@@ -9,7 +9,8 @@ Use this configuration to set up Traefik. It handles SSL certificates automatica
 ```yaml
 services:
   traefik:
-    image: traefik:v3.0
+    # ALWAYS check for the latest stable version: https://hub.docker.com/_/traefik
+    image: traefik:v3 # Pulls the latest v3.x release
     container_name: traefik
     command:
       - "--api.dashboard=true" # Enable Dashboard logic
@@ -25,10 +26,8 @@ services:
     ports:
       - "80:80"   # HTTP (Public)
       - "443:443" # HTTPS (Public)
-      # NEVER map 8080 globally without IP restriction!
-      # - "127.0.0.1:8080:8080" # Access via SSH Tunnel only
     volumes:
-      - "./letsencrypt:/letsencrypt"
+      - "./letsencrypt:/letsencrypt" # CRITICAL: Run 'touch acme.json && chmod 600 acme.json' locally first!
       - "./logs:/var/log/traefik" # Shared logs for Crowdsec
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
@@ -38,6 +37,9 @@ services:
       - "traefik.enable=true"
       # Watchtower update
       - "com.centurylinklabs.watchtower.enable=true"
+      # SECURITY: Dashboard is NOT exposed publicly.
+      # To access: Use SSH Tunnel: ssh -L 8080:localhost:8080 user@host
+      # Then browse http://localhost:8080/dashboard/
 
 networks:
   proxy-net:
