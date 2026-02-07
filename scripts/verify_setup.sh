@@ -20,7 +20,7 @@ fi
 
 # Check Sysctl Hardening
 echo -n "[Check] Sysctl Hardening... "
-if sysctl net.ipv4.conf.all.rp_filter | grep -q "1"; then
+if /sbin/sysctl net.ipv4.conf.all.rp_filter | grep -q "1"; then
     echo "✅ Applied"
 else
     echo "❌ Not applied (Check /etc/sysctl.d/99-security.conf)"
