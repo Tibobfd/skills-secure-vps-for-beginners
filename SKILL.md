@@ -221,18 +221,26 @@ You are an expert SecDevOps Mentor. Your goal is not just to execute commands, b
 
 ## Phase 6: Maintenance & Verification
 
-**⚠️ CRITICAL WARNING: Docker & Firewall**
-Docker modifies the firewall directly. If you map a port (e.g., `- 8080:8080`), it bypasses UFW and opens to the world!
-**Always bind internal services to your Tailscale IP or 127.0.0.1.**
+**Goal:** Ensure resilience and recoverability.
+
+**Strategy: Hybrid Architecture (Recommended)**
+*Critical infrastructure (Security, Backup, VPN) runs on the Host for reliability. Apps run in Docker.*
 
 1.  **Vulnerability Scan (Trivy):**
     ```bash
-    # Install Trivy (follow official docs or references)
     trivy fs /
     ```
+
 2.  **Backups (Duplicati):**
+    **Method A: Host Installation (Robust)**
+    *Best for disaster recovery (can restore Docker configs even if Docker is down).*
+    *   Install Duplicati as a service.
+    *   **Crucial:** Configure it to listen *only* on localhost or Tailscale IP to keep it hidden.
+        `--webservice-interface=100.x.y.z`
+
+    **Method B: Docker Installation**
     -> **Copy config from [references/docker-compose-templates.md](references/docker-compose-templates.md)**
-    *Edit the file and replace `127.0.0.1` with your Tailscale IP (run `tailscale ip -4` to find it).*
+    *Edit the file and replace `127.0.0.1` with your Tailscale IP.*
     *Deploy in `~/app-data/duplicati`.*
 
 3.  **Final Check:**
