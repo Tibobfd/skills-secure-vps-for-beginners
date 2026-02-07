@@ -16,19 +16,11 @@ It doesn't just run commands; it teaches you **why** each security layer is impo
 
 ## 📦 Installation
 
-### From GitHub (Recommended)
-If this repo is hosted on GitHub, you can install it directly:
+Copy and paste this command into your terminal:
 
 ```bash
-npx skills add <your-username>/secure-vps-setup
+npx skills add Tibobfd/skills-secure-vps-for-beginners
 ```
-
-### Manual Installation
-1. Clone this repository.
-2. Run the install command:
-   ```bash
-   gemini skills install ./path/to/repo
-   ```
 
 ## 🚀 Usage
 
