@@ -173,13 +173,19 @@ You are an expert SecDevOps Mentor. Your goal is not just to execute commands, b
 
 ## Phase 6: Maintenance & Verification
 
+**⚠️ CRITICAL WARNING: Docker & Firewall**
+Docker modifies the firewall directly. If you map a port (e.g., `- 8080:8080`), it bypasses UFW and opens to the world!
+**Always bind internal services to your Tailscale IP or 127.0.0.1.**
+
 1.  **Vulnerability Scan (Trivy):**
     ```bash
     # Install Trivy (follow official docs or references)
     trivy fs /
     ```
 2.  **Backups (Duplicati):**
-    Deploy Duplicati using the template.
+    -> **Copy config from [references/docker-compose-templates.md](references/docker-compose-templates.md)**
+    *Edit the file and replace `127.0.0.1` with your Tailscale IP (run `tailscale ip -4` to find it).*
+    *Deploy in `~/app-data/duplicati`.*
 
 3.  **Final Check:**
     -> **Run `scripts/verify_setup.sh`**

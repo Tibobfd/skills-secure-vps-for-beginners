@@ -4,13 +4,15 @@
 
 Use this configuration to set up Traefik. It handles SSL certificates automatically and routes traffic to your containers.
 
+**Security Note:** The Dashboard is disabled publicly by default.
+
 ```yaml
 services:
   traefik:
     image: traefik:v3.0
     container_name: traefik
     command:
-      - "--api.insecure=true" # Disable in production or protect with middleware
+      - "--api.dashboard=true" # Enable Dashboard logic
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
@@ -19,8 +21,10 @@ services:
       - "--certificatesresolvers.myresolver.acme.email=your-email@example.com" # CHANGE THIS
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
     ports:
-      - "80:80"
-      - "443:443"
+      - "80:80"   # HTTP (Public)
+      - "443:443" # HTTPS (Public)
+      # NEVER map 8080 globally without IP restriction!
+      # - "127.0.0.1:8080:8080" # Access via SSH Tunnel only
     volumes:
       - "./letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
@@ -29,11 +33,7 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.traefik-dashboard.rule=Host(`traefik.yourdomain.com`)" # Optional
-      - "traefik.http.routers.traefik-dashboard.entrypoints=websecure"
-      - "traefik.http.routers.traefik-dashboard.tls.certresolver=myresolver"
-      - "traefik.http.services.traefik-dashboard.loadbalancer.server.port=8080"
-      # Watchtower: Update this container automatically
+      # Watchtower update
       - "com.centurylinklabs.watchtower.enable=true"
 
 networks:
@@ -93,6 +93,8 @@ networks:
 
 Duplicati provides a web interface for managing encrypted backups.
 
+**CRITICAL SECURITY:** We bind the port to `127.0.0.1` (Localhost) or your Tailscale IP so it is NOT exposed to the public internet. **Docker bypasses UFW**, so mapping `8200:8200` is dangerous.
+
 ```yaml
 services:
   duplicati:
@@ -107,17 +109,12 @@ services:
       - ./backups:/backups
       - /home/ubuntu:/source
     ports:
-      - 8200:8200
+      # SECURE: Only allow access from the server itself (or SSH tunnel)
+      # To access via Tailscale, replace 127.0.0.1 with your Tailscale IP (e.g. 100.x.y.z)
+      - "127.0.0.1:8200:8200" 
     restart: unless-stopped
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.duplicati.rule=Host(`backup.yourdomain.com`)"
-      - "traefik.http.routers.duplicati.entrypoints=websecure"
-      - "traefik.http.routers.duplicati.tls.certresolver=myresolver"
-      - "traefik.http.services.duplicati.loadbalancer.server.port=8200"
       - "com.centurylinklabs.watchtower.enable=true"
-
-networks:
-  proxy-net:
-    external: true
+      # We do NOT expose this via Traefik publicly.
+      # Access via http://<Tailscale-IP>:8200
 ```
