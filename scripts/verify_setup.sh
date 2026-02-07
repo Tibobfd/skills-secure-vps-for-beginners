@@ -26,6 +26,14 @@ else
     echo "❌ Not applied (Check /etc/sysctl.d/99-security.conf)"
 fi
 
+# Check SSH Restriction
+echo -n "[Check] SSH Public Access... "
+if sudo ufw status | grep -E "^22(/tcp)? +ALLOW +Anywhere" > /dev/null; then
+    echo "⚠️  STILL OPEN (Public). Recommended: restrict to Tailscale."
+else
+    echo "✅ Restricted (Secure)"
+fi
+
 # Check Tailscale
 echo -n "[Check] Tailscale... "
 if tailscale status > /dev/null 2>&1; then

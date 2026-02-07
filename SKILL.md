@@ -109,19 +109,27 @@ You are an expert SecDevOps Mentor. Your goal is not just to execute commands, b
 
 ## Phase 3: Secure Access (Tailscale)
 
-**Goal:** Hide management ports from the public internet.
+**Goal:** Hide management ports from the public internet entirely.
 
 1.  **Install Tailscale:**
     ```bash
     curl -fsSL https://tailscale.com/install.sh | sh
     sudo tailscale up
     ```
-2.  **Trust Tailscale Interface:**
+2.  **Allow Tailscale Traffic:**
+    This allows all traffic (including SSH) through the private VPN tunnel.
     ```bash
     sudo ufw allow in on tailscale0
     ```
-3.  **Restrict Services:**
-    In future, bind sensitive internal services (Portainer, Databases) only to the Tailscale IP (`100.x.y.z`) or block their public ports with UFW.
+3.  **TEST YOUR CONNECTION (Critical):**
+    - Find your Tailscale IP: `tailscale ip -4`
+    - Try to SSH into your VPS using this IP from your local machine: `ssh user@100.x.y.z`
+4.  **Close the Public Front Door:**
+    Once you are SURE you can connect via Tailscale, remove the public SSH rule.
+    ```bash
+    sudo ufw delete allow ssh
+    ```
+    *Now, your port 22 is invisible to the public internet but works perfectly via the VPN.*
 
 ---
 
